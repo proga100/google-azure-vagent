@@ -1,23 +1,22 @@
-# Google Uzbek voice agent (Gemini Live + Cloud STT uz-UZ) — MVP stack.
-# No Postgres: the pipeline is stateless per call.
+# Google + Azure English voice-agent demo (Gemini Live + Azure Neural TTS).
+# Stateless per call. Public demo; cost guards live in the app.
 services:
   backend:
     build: ./backend
     ports:
-      - "8012:8012"
+      - "8013:8013"
     env_file:
       - .env
     volumes:
       - ./backend:/app
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8012 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8013 --reload
 
-  # Plain static test client (AudioWorklet mic + WebAudio playback).
-  # Served by any static file server; python http.server keeps it dependency-free.
+  # Static demo client (AudioWorklet mic + WebAudio playback + canvas orb).
   frontend:
     image: python:3.12-slim
     working_dir: /srv
     ports:
-      - "3010:3010"
+      - "3011:3011"
     volumes:
       - ./frontend/test-client:/srv
-    command: python -m http.server 3010
+    command: python -m http.server 3011
