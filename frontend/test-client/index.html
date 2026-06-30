@@ -398,6 +398,14 @@ setInterval(()=>{if(usageStart)renderUsage();},1000);
 })();
 
 // ---------------------------------------------------------------- init
+// In production the client is served same-origin behind TLS, so derive
+// wss://<host>/ws/voice. Local dev (served from localhost) keeps the :8013 default.
+(function(){
+  const h=location.hostname;
+  if(h && h!=='127.0.0.1' && h!=='localhost'){
+    $('url').value=(location.protocol==='https:'?'wss://':'ws://')+location.host+'/ws/voice';
+  }
+})();
 buildVoices();
 renderWordMeter();
 fetchInfo();

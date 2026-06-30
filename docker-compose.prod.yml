@@ -1,0 +1,22 @@
+# Production stack for google-azure-vagent.flance.info.
+#
+# Standalone (do NOT combine with docker-compose.yml — that one is dev-only).
+# Run on the box:  docker compose -f docker-compose.prod.yml up -d --build
+#
+# Backend bound to 127.0.0.1 only; the host's nginx (RunCloud) terminates TLS,
+# serves the static client from ./frontend/test-client, and proxies /ws/voice.
+services:
+  backend:
+    build: ./backend
+    # Host port 8013 (container 8013) — free on the box, must match the nginx vhost.
+    ports:
+      - "127.0.0.1:8013:8013"
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8013/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
